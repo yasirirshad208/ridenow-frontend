@@ -1,0 +1,70 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-background",
+      "description": "A collection of modern cars parked with a bridge in the background.",
+      "imageUrl": "https://boxcar-nextjs.vercel.app/_next/static/media/banner-hp3.8d8d4181.jpg",
+      "imageHint": "cars road"
+    },
+    {
+      "id": "sedan",
+      "description": "A modern white sedan parked on a city street.",
+      "imageUrl": "https://images.unsplash.com/photo-1648396427686-ebd2c29f4e49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzZWRhbiUyMGNhcnxlbnwwfHx8fDE3NjExOTMwOTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sedan car"
+    },
+    {
+      "id": "suv",
+      "description": "A spacious red SUV driving on a scenic mountain road.",
+      "imageUrl": "https://images.unsplash.com/photo-1704246125646-cfdf0cb6d2b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdXYlMjBjYXJ8ZW58MHx8fHwxNzYxMTI1OTg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "suv car"
+    },
+    {
+      "id": "convertible",
+      "description": "A sporty blue convertible with the top down, by the coast.",
+      "imageUrl": "https://images.unsplash.com/photo-1758935372767-18e5387b9780?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y29udmVydGlibGUlMjBjYXJ8ZW58MHx8fHwxNzYxMjI1OTUxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "convertible car"
+    },
+    {
+      "id": "hatchback",
+      "description": "A compact grey hatchback, perfect for city driving.",
+      "imageUrl": "https://images.unsplash.com/photo-1610768207795-72169abdf0d4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoYXRjaGJhY2slMjBjYXJ8ZW58MHx8fHwxNzYxMjE0MTg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hatchback car"
+    },
+    {
+      "id": "electric",
+      "description": "A futuristic silver electric car charging at a station.",
+      "imageUrl": "https://images.unsplash.com/photo-1639302610362-4c86747e8680?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxlbGVjdHJpYyUyMGNhcnxlbnwwfHx8fDE3NjEyMTYzMjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "electric car"
+    },
+    {
+      "id": "luxury",
+      "description": "A luxury black sedan with a sleek design.",
+      "imageUrl": "https://images.unsplash.com/photo-1618418721668-0d1f72aa4bab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsdXh1cnklMjBjYXJ8ZW58MHx8fHwxNzYxMTExNjg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "luxury car"
+    },
+    {
+      "id": "best-deal-car",
+      "description": "A modern car parked in a showroom, highlighting a great deal.",
+      "imageUrl": "https://boxcar-nextjs.vercel.app/images/resource/pricing1-1.jpg",
+      "imageHint": "car deal"
+    },
+    {
+      "id": "map-location",
+      "description": "A map showing the location of the car rental office.",
+      "imageUrl": "https://images.unsplash.com/photo-1619468129361-605ebea04b44?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYXAlMjBsb2NhdGlvbnxlbnwwfHx8fDE3NjExNzk4NjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "map location"
+    },
+    {
+      "id": "special-offer-sports-car",
+      "description": "A yellow sports car for the weekend special offer.",
+      "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCjXyRI7L2ImjVzsd-3oToB2IHpZ1u4lShimAO0p6iw1JV0_N8CDLhSyQvKvIr_SoIb7xKn-cqdb9U9J3b5pwnZQTz6BxCGEz128r6Q_UebzKUUtUj7gpJIAYeOOlkuoNQjVtEKRP4X9XuQJ8En4L9AU96vABvFf0LzegV2tWpozHDhZ16J-iBp7SNWBiQiJdKi1i0fsMxX44UNWQvbeRdn7iedHTM5mYgLZI4cej1JNbDegidU9cWOBHwYzEwijlqpjSKuiw_P6k6q",
+      "imageHint": "yellow sports car"
+    },
+    {
+      "id": "special-offer-suv",
+      "description": "A white SUV for the weekly deal offer.",
+      "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCf_mTw8VOZFUgQ2AYbPfiUdYow37tjcd49vdFatQsXsCvuRHbv6xavvXLPUiEfvOpv__NJowbClz9rdm4ePaFM2Rj8w9O4Zcuj_i3VC26goWSA59JnriM0uvtkkTu6IyUBXZmEdzmFl-zR4r3O8WhnEZ2KoxQ5XHIt3WlKhk3OObRZ5HZxhlgbp1oE0yaUk0hUBP5G6lIlNv6fYs_iOS523WMTmA-ROHNwP379EsV1lFhz8SIneb-wCVbcN8wOKys0cQmKOVt6crwL",
+      "imageHint": "white suv road"
+    }
+  ]
+}
