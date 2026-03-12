@@ -2,7 +2,7 @@
 'use client';
 
 import { Suspense, useState, useEffect, useCallback } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { Car } from '@/lib/types';
 import { Header } from '@/components/Header';
 import { MostSearchedCarCard } from '@/components/MostSearchedCarCard';
@@ -28,38 +28,85 @@ type FilterParams = {
   [key: string]: string | undefined;
 };
 
-type SearchParams = Record<string, string | string[] | undefined>;
+const normalizeFilterValue = (value: string | number | undefined | null) =>
+  String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
 
-const toSingleParam = (value?: string | string[]) => (Array.isArray(value) ? value[0] : value);
+const normalizeSearchParam = (value: string | null) => {
+  if (!value) return undefined;
 
-const toSearchParams = (params: SearchParams) => {
-  const next = new URLSearchParams();
-  for (const [key, value] of Object.entries(params)) {
-    const singleValue = toSingleParam(value);
-    if (singleValue !== undefined && singleValue !== '') {
-      next.set(key, singleValue);
-    }
+  const trimmed = value.trim();
+  const normalized = trimmed.toLowerCase();
+
+  if (!trimmed || normalized === 'all' || normalized === 'undefined' || normalized === 'null') {
+    return undefined;
   }
-  return next;
+
+  return trimmed;
 };
 
-export default function FleetPageClient({ searchParams }: { searchParams: SearchParams }) {
+const typeAliases: Record<string, string[]> = {
+  sedan: ['sedan', 'saloon'],
+  suv: ['suv', 'sportutilityvehicle', 'crossover'],
+  hatchback: ['hatchback'],
+  luxury: ['luxury', 'premium'],
+  sports: ['sports', 'sport', 'sportscar', 'coupe', 'performance'],
+  van: ['van', 'minivan', 'mpv'],
+  truck: ['truck', 'pickup', 'pickuptruck'],
+};
+
+const matchesNormalizedValue = (
+  sourceValue: string | number | undefined | null,
+  selectedValue: string | number | undefined | null
+) => {
+  const source = normalizeFilterValue(sourceValue);
+  const selected = normalizeFilterValue(selectedValue);
+
+  if (!selected) return true;
+  if (!source) return false;
+
+  return source === selected || source.includes(selected) || selected.includes(source);
+};
+
+const matchesCarType = (
+  sourceType: string | number | undefined | null,
+  selectedType: string | undefined
+) => {
+  const normalizedSourceType = normalizeFilterValue(sourceType);
+  const normalizedSelectedType = normalizeFilterValue(selectedType);
+
+  if (!normalizedSelectedType) return true;
+  if (!normalizedSourceType) return false;
+
+  const aliases = typeAliases[normalizedSelectedType] ?? [normalizedSelectedType];
+  return aliases.some(
+    (alias) =>
+      normalizedSourceType === alias ||
+      normalizedSourceType.includes(alias) ||
+      alias.includes(normalizedSourceType)
+  );
+};
+
+export default function FleetPageClient() {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [allCars, setAllCars] = useState<Car[]>([]);
   const [displayedCars, setDisplayedCars] = useState<Car[]>([]);
   const [page, setPage] = useState(1);
-  const [sort, setSort] = useState(toSingleParam(searchParams.sort) || 'createdAt-desc');
+  const [sort, setSort] = useState(searchParams.get('sort') || 'createdAt-desc');
   const [loading, setLoading] = useState(true);
 
-  const brand = toSingleParam(searchParams.brand) || undefined;
-  const type = toSingleParam(searchParams.type) || undefined;
-  const fuelType = toSingleParam(searchParams.fuelType) || undefined;
-  const transmission = toSingleParam(searchParams.transmission) || undefined;
-  const seatingCapacityParam = toSingleParam(searchParams.seatingCapacity) || undefined;
-  const price = toSingleParam(searchParams.price) || undefined;
-  const sortParam = toSingleParam(searchParams.sort) || 'createdAt-desc';
+  const brand = normalizeSearchParam(searchParams.get('brand'));
+  const type = normalizeSearchParam(searchParams.get('type'));
+  const fuelType = normalizeSearchParam(searchParams.get('fuelType'));
+  const transmission = normalizeSearchParam(searchParams.get('transmission'));
+  const seatingCapacityParam = normalizeSearchParam(searchParams.get('seatingCapacity'));
+  const price = normalizeSearchParam(searchParams.get('price'));
+  const sortParam = normalizeSearchParam(searchParams.get('sort')) || 'createdAt-desc';
 
   const [minPriceRaw, maxPriceRaw] = price?.split('-') ?? [];
   const parsedMinPrice = minPriceRaw ? Number(minPriceRaw) : undefined;
@@ -71,7 +118,7 @@ export default function FleetPageClient({ searchParams }: { searchParams: Search
 
   const createQueryString = useCallback(
     (params: Record<string, string | number | undefined | null>) => {
-      const newSearchParams = toSearchParams(searchParams);
+      const newSearchParams = new URLSearchParams(searchParams.toString());
       for (const [key, value] of Object.entries(params)) {
         if (value === null || value === undefined || value === '') {
           newSearchParams.delete(key);
@@ -125,17 +172,54 @@ export default function FleetPageClient({ searchParams }: { searchParams: Search
     const loadVehicles = async () => {
       setLoading(true);
       try {
-        const response = await fetchVehicles({
-          brand,
-          type,
-          fuelType,
-          transmission,
-          seatingCapacity,
-          minPrice,
-          maxPrice,
+        // Fetch a full working set and apply filters locally for consistent results.
+        const response = await fetchVehicles({ limit: 500 });
+        const vehicles = response.data || [];
+
+        const filteredVehicles = vehicles.filter((car) => {
+          const extendedCar = car as Car & {
+            make?: string;
+            manufacturer?: string;
+            carType?: string;
+            bodyType?: string;
+            category?: string;
+          };
+
+          const carBrandSource = extendedCar.brand ?? extendedCar.make ?? extendedCar.manufacturer;
+          const carTypeSource =
+            extendedCar.type ?? extendedCar.carType ?? extendedCar.bodyType ?? extendedCar.category;
+          const carFuelType = normalizeFilterValue(car.fuelType);
+          const carTransmission = normalizeFilterValue(car.transmission);
+          const carPrice = Number(car.pricePerDay);
+          const carSeating = Number(car.seatingCapacity);
+
+          const matchesBrand = matchesNormalizedValue(carBrandSource, brand);
+          const matchesType = matchesCarType(carTypeSource, type);
+          const matchesFuelType = !fuelType || carFuelType === normalizeFilterValue(fuelType);
+          const matchesTransmission =
+            !transmission || carTransmission === normalizeFilterValue(transmission);
+          const matchesMinPrice = minPrice === undefined || carPrice >= minPrice;
+          const matchesMaxPrice = maxPrice === undefined || carPrice <= maxPrice;
+          const matchesSeating =
+            seatingCapacity === undefined
+              ? true
+              : seatingCapacityParam === '7'
+              ? carSeating >= 7
+              : carSeating === seatingCapacity;
+
+          return (
+            matchesBrand &&
+            matchesType &&
+            matchesFuelType &&
+            matchesTransmission &&
+            matchesMinPrice &&
+            matchesMaxPrice &&
+            matchesSeating
+          );
         });
+
         if (isMounted) {
-          setAllCars(response.data || []);
+          setAllCars(filteredVehicles);
           setPage(1);
         }
       } catch (error) {

@@ -125,8 +125,18 @@ export default function HomePageClient() {
 
 
   const handleFilterSubmit = (filters: Record<string, string | undefined>) => {
-    const queryString = new URLSearchParams(filters as Record<string, string>).toString();
-    router.push(`/fleet?${queryString}`);
+    const queryEntries = Object.entries(filters).filter(
+      ([, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== '' &&
+        value !== 'all' &&
+        value !== 'undefined' &&
+        value !== 'null'
+    ) as [string, string][];
+
+    const queryString = new URLSearchParams(queryEntries).toString();
+    router.push(queryString ? `/fleet?${queryString}` : '/fleet');
   };
 
 

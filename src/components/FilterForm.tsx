@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,16 +14,34 @@ type FilterFormProps = {
   onFilterChange?: (filters: Record<string, string | undefined>) => void;
 };
 
+const getSearchFilterValue = (value: string | null) => {
+  if (!value) return 'all';
+  const normalized = value.trim().toLowerCase();
+  if (!normalized || normalized === 'all' || normalized === 'undefined' || normalized === 'null') {
+    return 'all';
+  }
+  return value;
+};
+
 export function FilterForm({ onFilterChange }: FilterFormProps) {
   const searchParams = useSearchParams();
 
-  const [brand, setBrand] = useState(searchParams.get('brand') || 'all');
-  const [carType, setCarType] = useState(searchParams.get('type') || 'all');
-  const [price, setPrice] = useState(searchParams.get('price') || 'all');
-  const [seatingCapacity, setSeatingCapacity] = useState(searchParams.get('seatingCapacity') || 'all');
-  const [fuelType, setFuelType] = useState(searchParams.get('fuelType') || 'all');
-  const [transmission, setTransmission] = useState(searchParams.get('transmission') || 'all');
+  const [brand, setBrand] = useState(getSearchFilterValue(searchParams.get('brand')));
+  const [carType, setCarType] = useState(getSearchFilterValue(searchParams.get('type')));
+  const [price, setPrice] = useState(getSearchFilterValue(searchParams.get('price')));
+  const [seatingCapacity, setSeatingCapacity] = useState(getSearchFilterValue(searchParams.get('seatingCapacity')));
+  const [fuelType, setFuelType] = useState(getSearchFilterValue(searchParams.get('fuelType')));
+  const [transmission, setTransmission] = useState(getSearchFilterValue(searchParams.get('transmission')));
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+
+  useEffect(() => {
+    setBrand(getSearchFilterValue(searchParams.get('brand')));
+    setCarType(getSearchFilterValue(searchParams.get('type')));
+    setPrice(getSearchFilterValue(searchParams.get('price')));
+    setSeatingCapacity(getSearchFilterValue(searchParams.get('seatingCapacity')));
+    setFuelType(getSearchFilterValue(searchParams.get('fuelType')));
+    setTransmission(getSearchFilterValue(searchParams.get('transmission')));
+  }, [searchParams]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,7 +65,14 @@ export function FilterForm({ onFilterChange }: FilterFormProps) {
     setFuelType('all');
     setTransmission('all');
     if(onFilterChange) {
-        onFilterChange({});
+        onFilterChange({
+          brand: undefined,
+          type: undefined,
+          price: undefined,
+          seatingCapacity: undefined,
+          fuelType: undefined,
+          transmission: undefined,
+        });
     }
   }
 
